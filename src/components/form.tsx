@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, FormEvent } from "react"
-import WAlogo from "../images/whatsapp-icon.svg"
+import { FaWhatsapp } from "react-icons/fa"
 
 const Form = () => {
   const [phone, setPhone] = useState("")
@@ -28,10 +28,16 @@ const Form = () => {
           placeholder="Ingrese su número de teléfono"
           className="form-control"
           ref={inputRef}
+          style={{
+            backgroundColor: "rgba(220,248,198,1)",
+          }}
         />
       </div>
-      <button onClick={e => redirect(e)} className="btn btn-success mt-3">
-        WA
+      <button
+        onClick={e => redirect(e)}
+        className="btn btn-large btn-success mt-3"
+      >
+        Ir al whatsapp <FaWhatsapp />
       </button>
     </form>
   )
