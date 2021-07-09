@@ -1,8 +1,12 @@
+import { useEffect } from "react"
 import Form from "../components/form"
 import { FaGithub } from "react-icons/fa"
 import { FaWhatsapp } from "react-icons/fa"
 
 const index = () => {
+  useEffect(() => {
+    document.title = "Redirect to Whatsapp"
+  }, [])
   return (
     <div className="d-flex flex-column vh-100">
       <div className="my-auto">
