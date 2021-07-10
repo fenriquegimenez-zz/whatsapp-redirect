@@ -37,6 +37,7 @@ const Form = () => {
           style={{
             backgroundColor: "rgba(220,248,198,1)",
           }}
+          value={phone}
         />
       </div>
       <div className="input-group my-2">
