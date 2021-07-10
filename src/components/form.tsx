@@ -16,6 +16,8 @@ const Form = () => {
       "+595",
       ""
     )}?text=${text}`
+    setPhone("")
+    setText("")
   }
 
   return (
