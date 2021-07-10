@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import Form from "../components/form"
 import { FaGithub, FaWhatsapp } from "react-icons/fa"
 
-const index = () => {
+const Index = () => {
   useEffect(() => {
     document.title = "Redirect to Whatsapp"
   }, [])
@@ -43,4 +43,4 @@ const index = () => {
   )
 }
 
-export default index
+export default Index
