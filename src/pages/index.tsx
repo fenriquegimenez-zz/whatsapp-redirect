@@ -1,7 +1,6 @@
 import { useEffect } from "react"
 import Form from "../components/form"
-import { FaGithub } from "react-icons/fa"
-import { FaWhatsapp } from "react-icons/fa"
+import { FaGithub, FaWhatsapp } from "react-icons/fa"
 
 const index = () => {
   useEffect(() => {

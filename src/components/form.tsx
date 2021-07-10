@@ -3,6 +3,7 @@ import { FaWhatsapp } from "react-icons/fa"
 
 const Form = () => {
   const [phone, setPhone] = useState("")
+  const [text, setText] = useState("")
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -11,7 +12,10 @@ const Form = () => {
 
   function redirect(event: FormEvent) {
     event.preventDefault()
-    window.location.href = `https://wa.me/+595${phone.replace("+595", "")}`
+    window.location.href = `https://wa.me/+595${phone.replace(
+      "+595",
+      ""
+    )}?text=${text}`
   }
 
   return (
@@ -32,6 +36,17 @@ const Form = () => {
             backgroundColor: "rgba(220,248,198,1)",
           }}
         />
+      </div>
+      <div className="input-group my-2">
+        <textarea
+          className="form-control"
+          placeholder="Podés agregar un mensaje personalizado"
+          value={text}
+          onChange={e => setText(e.target.value)}
+          style={{
+            backgroundColor: "rgba(220,248,198,1)",
+          }}
+        ></textarea>
       </div>
       <button
         onClick={e => redirect(e)}
