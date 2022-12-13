@@ -16,7 +16,14 @@ const WaForm = () => {
 
   function redirect(data: FormData) {
     const cleanedPhoneNumber = data.phoneNumber.trim().replaceAll(' ', '');
-    router.push(`https://wa.me/${cleanedPhoneNumber}?text=${data.text}`);
+    router.push(
+      `https://wa.me/${
+        cleanedPhoneNumber.includes('+595') ||
+        cleanedPhoneNumber.startsWith('595')
+          ? cleanedPhoneNumber
+          : `+595${cleanedPhoneNumber}`
+      }?text=${data.text}`,
+    );
   }
 
   const validatePhoneNumber = (values: FormData) => {
