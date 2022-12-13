@@ -1,12 +1,19 @@
 import type { AppProps /*, AppContext */ } from "next/app"
+import Head from 'next/head'
+
 import "bootstrap/dist/css/bootstrap.min.css"
 import Layout from "../components/Layout"
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <Layout>
+    <>
+    <Head>
+      <title>Redirect to Whatsapp</title>
+    </Head>
+      <Layout>
       <Component {...pageProps} />
     </Layout>
+    </>
   )
 }
 
