@@ -1,8 +1,10 @@
+import { FC } from "react"
+
 interface LayoutChild {
   children?: React.ReactNode
 }
 
-const Layout = ({ children }: LayoutChild) => {
+const Layout: FC<LayoutChild> = ({ children }) => {
   return (
     <div
       className="container-fluid vh-100 text-center"

@@ -1,64 +1,116 @@
-import { useState, useEffect, useRef, FormEvent } from "react"
-import { FaWhatsapp } from "react-icons/fa"
+import { useRef } from 'react';
+import { useRouter } from 'next/router';
+import { Field, ErrorMessage, useFormik, FormikProvider } from 'formik';
+import { FaWhatsapp } from 'react-icons/fa';
 
-const Form = () => {
-  const [phone, setPhone] = useState("")
-  const [text, setText] = useState("")
-  const inputRef = useRef<HTMLInputElement>(null)
+import { phoneValidator } from '../helpers';
+import { getFromClipboard } from '../helpers/getFromClipboard';
 
-  useEffect(() => {
-    inputRef.current?.focus()
-  }, [])
+interface FormData {
+  text: string;
+  phoneNumber: string;
+}
 
-  function redirect(event: FormEvent) {
-    event.preventDefault()
-    window.location.href = `https://wa.me/+595${phone.replace(
-      "+595",
-      ""
-    )}?text=${text}`
-    setPhone("")
-    setText("")
+const WaForm = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  function redirect(data: FormData) {
+    const cleanedPhoneNumber = data.phoneNumber.trim().replaceAll(' ', '');
+    router.push(
+      `https://wa.me/${
+        cleanedPhoneNumber.includes('+595') ||
+        cleanedPhoneNumber.startsWith('595')
+          ? cleanedPhoneNumber
+          : `+595${cleanedPhoneNumber}`
+      }?text=${data.text}`,
+    );
   }
 
+  const validatePhoneNumber = (values: FormData) => {
+    const errors: { phoneNumber?: string } = {};
+    const { validNumber } = phoneValidator(
+      values.phoneNumber.trim().replaceAll(' ', ''),
+    );
+    if (!validNumber) errors.phoneNumber = 'Número de teléfono inválido';
+    return errors;
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      phoneNumber: '',
+      text: '',
+    },
+    onSubmit: redirect,
+    validate: validatePhoneNumber,
+  });
+
+  const handleClipboard = async () => {
+    try {
+      const text = await getFromClipboard();
+
+      if (text) {
+        formik.setFieldValue('phoneNumber', text);
+      } else {
+        inputRef.current?.focus();
+      }
+    } catch (error) {
+      console.error(error);
+      formik.setErrors({
+        phoneNumber: `Error al pegar el número de teléfono, por favor concede los permisos o pegalo manualmente.`,
+      });
+    }
+  };
+
   return (
-    <form
-      className="container"
-      style={{
-        maxWidth: "600px",
-      }}
-    >
-      <div className="input-group my-2">
-        <input
-          type="number"
-          onChange={e => setPhone(e.target.value)}
-          placeholder="Ingrese su número de teléfono"
-          className="form-control"
-          ref={inputRef}
+    <>
+      <FormikProvider value={formik}>
+        <form
+          className="container"
           style={{
-            backgroundColor: "rgba(220,248,198,1)",
+            maxWidth: '600px',
           }}
-          value={phone}
-        />
-      </div>
-      <div className="input-group my-2">
-        <textarea
-          className="form-control"
-          placeholder="Podés agregar un mensaje personalizado"
-          value={text}
-          onChange={e => setText(e.target.value)}
-          style={{
-            backgroundColor: "rgba(220,248,198,1)",
-          }}
-        ></textarea>
-      </div>
+        >
+          <div className="input-group my-2">
+            <Field
+              ref={inputRef}
+              name="phoneNumber"
+              type="text"
+              className={`form-control ${
+                formik.errors.phoneNumber ? 'is-invalid' : 'is-valid'
+              }`}
+              placeholder="Número de teléfono"
+            />
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={handleClipboard}
+            >
+              {'Pegar número'}
+            </button>
+          </div>
+          <ErrorMessage name="phoneNumber" />
+          <div className="input-group my-2">
+            <Field
+              name="text"
+              type="textarea"
+              className="form-control"
+              rows={3}
+              placeholder="Introduce el texto que deseas enviar"
+              component="textarea"
+            />
+          </div>
+        </form>
+      </FormikProvider>
       <button
-        onClick={e => redirect(e)}
         className="btn btn-large btn-success mt-3"
+        disabled={!formik.dirty}
+        onClick={() => redirect(formik.values)}
       >
         Ir al whatsapp <FaWhatsapp />
       </button>
-    </form>
-  )
-}
+    </>
+  );
+};
 
-export default Form
+export default WaForm;
