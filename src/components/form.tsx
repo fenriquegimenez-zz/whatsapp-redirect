@@ -4,6 +4,7 @@ import { Field, ErrorMessage, useFormik, FormikProvider } from 'formik';
 import { FaWhatsapp } from 'react-icons/fa';
 
 import { phoneValidator } from '../helpers';
+import { getFromClipboard } from '../helpers/getFromClipboard';
 
 interface FormData {
   text: string;
@@ -28,7 +29,9 @@ const WaForm = () => {
 
   const validatePhoneNumber = (values: FormData) => {
     const errors: { phoneNumber?: string } = {};
-    const { validNumber } = phoneValidator(values.phoneNumber);
+    const { validNumber } = phoneValidator(
+      values.phoneNumber.trim().replaceAll(' ', ''),
+    );
     if (!validNumber) errors.phoneNumber = 'Número de teléfono inválido';
     return errors;
   };
@@ -41,6 +44,23 @@ const WaForm = () => {
     onSubmit: redirect,
     validate: validatePhoneNumber,
   });
+
+  const handleClipboard = async () => {
+    try {
+      const text = await getFromClipboard();
+
+      if (text) {
+        formik.setFieldValue('phoneNumber', text);
+      } else {
+        inputRef.current?.focus();
+      }
+    } catch (error) {
+      console.error(error);
+      formik.setErrors({
+        phoneNumber: `Error al pegar el número de teléfono, por favor concede los permisos o pegalo manualmente.`,
+      });
+    }
+  };
 
   return (
     <>
@@ -61,6 +81,13 @@ const WaForm = () => {
               }`}
               placeholder="Número de teléfono"
             />
+            <button
+              type="button"
+              className="btn btn-success"
+              onClick={handleClipboard}
+            >
+              {'Pegar número'}
+            </button>
           </div>
           <ErrorMessage name="phoneNumber" />
           <div className="input-group my-2">
